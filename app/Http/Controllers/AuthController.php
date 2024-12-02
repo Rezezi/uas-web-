@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\User;
@@ -60,10 +59,10 @@ class AuthController extends Controller
             // Cek peran pengguna dan arahkan sesuai peran
             if ($user->role === 'admin') {
                 // Redirect ke halaman admin jika role adalah admin
-                return redirect('/books')->with('success', 'Login berhasil sebagai admin.');
+                return redirect('/products')->with('success', 'Login berhasil sebagai admin.');
             } else {
                 // Redirect ke halaman user jika role adalah user
-                return redirect()->route('user.books')->with('success', 'Login berhasil sebagai user.');
+                return redirect('/')->with('success', 'Login berhasil sebagai user.');  // Perbaiki di sini, langsung redirect ke '/' untuk user
             }
         }
 

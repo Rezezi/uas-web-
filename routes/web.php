@@ -1,33 +1,24 @@
 <?php
-
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\BookController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CartController;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
-// Route untuk halaman utama yang menampilkan daftar buku
-Route::get('/', [UserController::class, 'index'])->name('user.books');
+// Route untuk halaman utama (UserController digunakan sebagai landing page untuk user)
+Route::get('/', [UserController::class, 'index'])->name('user.home');
 
-// Route untuk CRUD buku (untuk admin)
-Route::resource('books', BookController::class);
+// Route untuk CRUD produk (menggunakan ProductController untuk admin)
+Route::resource('products', ProductController::class);
 
-// Route untuk peminjaman dan pengembalian buku oleh user (harus login)
+// Route untuk aktivitas user yang membutuhkan autentikasi
 Route::middleware(['auth'])->group(function () {
-    // Route untuk memproses peminjaman buku
-    Route::post('/borrow/{id}', [UserController::class, 'borrow'])->name('user.borrow');
-
-    // Route untuk memproses pengembalian buku
-    Route::post('/return/{id}', [UserController::class, 'returnBook'])->name('user.return');
-
-    // Route untuk menampilkan daftar buku yang sedang dipinjam oleh user
-    Route::get('/user/borrowed-books', [UserController::class, 'borrowedBooks'])->name('user.borrowed.books');
-
-    // Route tambahan untuk halaman riwayat peminjaman
-    Route::get('/user/history', [UserController::class, 'history'])->name('user.history');
-
-    // Route tambahan untuk halaman keranjang
-    Route::get('/user/cart', [UserController::class, 'cart'])->name('user.cart');
+    Route::post('/cart/add/{id}', [CartController::class, 'addToCart'])->name('user.add_to_cart');
+    Route::get('/cart', [CartController::class, 'viewCart'])->name('user.cart');
+    Route::post('/checkout', [CartController::class, 'checkout'])->name('user.checkout');
+    Route::get('/cart/remove/{id}', [CartController::class, 'removeFromCart'])->name('user.remove_from_cart'); // Menghapus produk dari keranjang
+    Route::get('/transaction', [CartController::class, 'transaction'])->name('user.transaction'); // Halaman transaksi
 });
 
 // Rute untuk login dan registrasi
@@ -39,5 +30,5 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.su
 // Logout route
 Route::post('/logout', function () {
     Auth::logout();
-    return redirect('/'); // Redirect ke halaman utama setelah logout
+    return redirect('/');
 })->name('logout');

@@ -1,100 +1,50 @@
 <?php
-
 namespace App\Http\Controllers;
 
-use App\Models\Book;
-use App\Models\Borrow;
+use App\Models\Product;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    // Tampilkan daftar buku yang tersedia
+    // Menampilkan halaman utama untuk user
     public function index()
     {
-        $books = Book::where('stock', '>', 0)->get();
-        return view('user.books', compact('books'));
+        $products = Product::all(); // Mengambil semua produk
+        return view('user.home', compact('products'));
     }
 
-    // Pinjam buku
-    public function borrow($id)
+    // Menambahkan produk ke keranjang
+    public function addToCart(Request $request, $id)
     {
-        $book = Book::findOrFail($id);
+        $product = Product::findOrFail($id);
 
-        if ($book->stock > 0) {
-            $book->decrement('stock');
+        // Logika untuk menambahkan produk ke keranjang (misalnya disimpan di sesi atau database)
+        $cart = session()->get('cart', []);
+        $cart[$id] = [
+            'name' => $product->name,
+            'price' => $product->price,
+            'quantity' => $request->quantity ?? 1,
+        ];
+        session()->put('cart', $cart);
 
-            Borrow::create([
-                'user_id' => Auth::id(),
-                'book_id' => $book->id,
-                'borrowed_at' => now(),
-            ]);
-
-            return redirect()->back()->with('success', 'Buku berhasil dipinjam.');
-        }
-
-        return redirect()->back()->with('error', 'Stok buku habis.');
+        return redirect()->route('user.cart')->with('success', 'Produk berhasil ditambahkan ke keranjang!');
     }
 
-    // Kembalikan buku
-    public function returnBook($id)
+    // Melihat isi keranjang
+    public function viewCart()
     {
-        $borrow = Borrow::where('user_id', Auth::id())
-                        ->where('book_id', $id)
-                        ->whereNull('returned_at')
-                        ->first();
-
-        if ($borrow) {
-            $book = $borrow->book;
-            $book->increment('stock');
-            $borrow->update(['returned_at' => now()]);
-
-            return redirect()->back()->with('success', 'Buku berhasil dikembalikan.');
-        }
-
-        return redirect()->back()->with('error', 'Buku tidak ditemukan atau sudah dikembalikan.');
+        $cart = session()->get('cart', []);
+        return view('user.cart', compact('cart'));
     }
 
-    // Tampilkan buku yang sedang dipinjam oleh pengguna
-    public function borrowedBooks()
+    // Checkout produk di keranjang
+    public function checkout()
     {
-        $borrows = Borrow::where('user_id', Auth::id())
-                         ->whereNull('returned_at')
-                         ->with('book')
-                         ->get();
+        $cart = session()->get('cart', []);
 
-        return view('user.borrowed_books', compact('borrows'));
-    }
+        // Logika checkout (misalnya simpan ke database transaksi)
+        session()->forget('cart');
 
-    // Tampilkan riwayat peminjaman buku oleh pengguna
-    public function borrowHistory()
-    {
-        $borrows = Borrow::where('user_id', Auth::id())
-                         ->with('book')
-                         ->get();
-
-        return view('user.borrow_history', compact('borrows'));
-    }
-
-    // Tampilkan riwayat pengembalian buku oleh pengguna
-    public function returnHistory()
-    {
-        $returns = Borrow::where('user_id', Auth::id())
-                         ->whereNotNull('returned_at')
-                         ->with('book')
-                         ->get();
-
-        return view('user.return_history', compact('returns'));
-    }
-
-    // Tampilkan halaman keranjang
-    public function cart()
-    {
-        $borrows = Borrow::where('user_id', Auth::id())
-                         ->whereNull('returned_at')
-                         ->with('book')
-                         ->get();
-
-        return view('user.cart', compact('borrows'));
+        return redirect('/')->with('success', 'Pesanan berhasil diproses!');
     }
 }

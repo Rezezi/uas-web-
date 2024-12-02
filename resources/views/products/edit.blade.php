@@ -1,10 +1,10 @@
-{{-- resources/views/books/create.blade.php --}}
+{{-- resources/views/products/edit.blade.php --}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Book</title>
+    <title>Edit Product</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -46,8 +46,18 @@
             transition: border-color 0.3s ease;
         }
 
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 10px;
+            border: 1px solid #ced4da;
+            transition: border-color 0.3s ease;
+        }
+
         input[type="text"]:focus,
-        input[type="number"]:focus {
+        input[type="number"]:focus,
+        textarea:focus {
             border-color: #007bff;
             box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
         }
@@ -100,29 +110,31 @@
 </head>
 <body>
     <div class="container">
-        <h1>Add New Book</h1>
+        <h1>Edit Product</h1>
 
-        <form action="{{ route('books.store') }}" method="POST">
+        <form action="{{ route('products.update', $product->id) }}" method="POST">
             @csrf
-            <label for="title">Title:</label>
-            <input type="text" name="title" required>
+            @method('PUT')
 
-            <label for="author">Author:</label>
-            <input type="text" name="author" required>
+            <label for="name">Product Name:</label>
+            <input type="text" name="name" value="{{ $product->name }}" required>
 
-            <label for="year">Year:</label>
-            <input type="number" name="year" required>
+            <label for="price">Price:</label>
+            <input type="number" name="price" value="{{ $product->price }}" required>
 
             <label for="stock">Stock:</label>
-            <input type="number" name="stock" required>
+            <input type="number" name="stock" value="{{ $product->stock }}" required>
 
-            <label for="genre">Genre:</label>
-            <input type="text" name="genre" required>
+            <label for="category">Category:</label>
+            <input type="text" name="category" value="{{ $product->category }}" required>
 
-            <button type="submit" class="btn">Add Book</button>
+            <label for="description">Description:</label>
+            <textarea name="description" rows="4" required>{{ $product->description }}</textarea>
+
+            <button type="submit" class="btn">Update Product</button>
         </form>
 
-        <a href="{{ route('books.index') }}" class="btn">Back to Book List</a>
+        <a href="{{ route('products.index') }}" class="btn">Back to Product List</a>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
