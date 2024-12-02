@@ -1,4 +1,5 @@
 <?php
+
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AuthController;
@@ -19,6 +20,10 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/checkout', [CartController::class, 'checkout'])->name('user.checkout');
     Route::get('/cart/remove/{id}', [CartController::class, 'removeFromCart'])->name('user.remove_from_cart'); // Menghapus produk dari keranjang
     Route::get('/transaction', [CartController::class, 'transaction'])->name('user.transaction'); // Halaman transaksi
+
+    // Route untuk melihat dan mengupdate profil
+    Route::get('/profile', [UserController::class, 'profile'])->name('user.profile');
+    Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('user.updateProfile');
 });
 
 // Rute untuk login dan registrasi

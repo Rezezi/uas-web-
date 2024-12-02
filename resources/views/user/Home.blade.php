@@ -69,19 +69,24 @@
         @endforelse
     </div>
 
-    <!-- Bagian Profil -->
+    <!-- Bagian Profil Pengguna di Sisi Kiri -->
     @auth
-    <div class="bg-white rounded shadow-sm p-4 mt-5">
-        <h3 class="fw-bold text-primary mb-3">Profil Pengguna</h3>
-        <div class="d-flex align-items-center">
-            <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="rounded-circle me-4" style="width: 100px; height: 100px; object-fit: cover;">
-            <div>
-                <h5 class="fw-bold mb-1">{{ Auth::user()->name }}</h5>
-                <p class="text-muted mb-1">{{ Auth::user()->email }}</p>
-                <p class="text-muted">Bergabung sejak: {{ Auth::user()->created_at->format('d M Y') }}</p>
+    <div class="row mt-5">
+        <!-- Profil Pengguna di Sisi Kiri -->
+        <div class="col-md-4">
+            <div class="bg-white rounded shadow-sm p-4">
+                <h3 class="fw-bold text-primary mb-3">Profil Pengguna</h3>
+                <div class="d-flex align-items-center">
+                    <img src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Avatar" class="rounded-circle me-4" style="width: 100px; height: 100px; object-fit: cover;">
+                    <div>
+                        <h5 class="fw-bold mb-1">{{ Auth::user()->name }}</h5>
+                        <p class="text-muted mb-1">{{ Auth::user()->email }}</p>
+                        <p class="text-muted">Bergabung sejak: {{ Auth::user()->created_at->format('d M Y') }}</p>
+                    </div>
+                </div>
+                <a href="{{ url('/profile') }}" class="btn btn-outline-primary mt-3">Edit Profil</a>
             </div>
         </div>
-        <a href="{{ url('/profile/edit') }}" class="btn btn-outline-primary mt-3">Edit Profil</a>
     </div>
     @endauth
 </div>

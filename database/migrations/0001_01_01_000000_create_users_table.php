@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->string('role')->default('user'); // Tambahkan kolom role
+            $table->string('avatar')->nullable(); // Menambahkan kolom avatar (nullable agar bisa kosong)
             $table->timestamps();
         });
 
